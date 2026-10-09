@@ -147,6 +147,62 @@ class ConsultorCarreiras(KnowledgeEngine):
         self.placar[trilha] += pontos
         self.disparos.append((regra, trilha, pontos, motivo))
 
+    # ======================= NÍVEL 1: perfis derivados ========================
+    @Rule(Resposta(matematica="Alta", atuacao=EM("dados_brutos", "algoritmos")), salience=10)
+    def d1_perfil_analitico(self):
+        self.perfis.append(("D1", "analítico", "Matemática alta + gosto por dados/algoritmos"))
+        self.declare(Perfil(tipo="analitico"))
+
+    @Rule(Resposta(atuacao=EM("automacao", "planejar_infra")), salience=10)
+    def d2a_perfil_infra(self):
+        self.perfis.append(("D2a", "infraestrutura", "Rotina voltada a automação/planejamento de infra"))
+        self.declare(Perfil(tipo="infra"))
+
+    @Rule(Resposta(entrega="infraestrutura"), salience=10)
+    def d2b_perfil_infra(self):
+        self.perfis.append(("D2b", "infraestrutura", "Valoriza entregar a infraestrutura que sustenta o sistema"))
+        self.declare(Perfil(tipo="infra"))
+
+    @Rule(Resposta(atuacao="layouts"), salience=10)
+    def d3a_perfil_visual(self):
+        self.perfis.append(("D3a", "visual", "Prefere criar layouts visuais"))
+        self.declare(Perfil(tipo="visual"))
+
+    @Rule(Resposta(entrega="produto_usuario", plataforma="web"), salience=10)
+    def d3b_perfil_visual(self):
+        self.perfis.append(("D3b", "visual", "Quer entregar o produto final na web"))
+        self.declare(Perfil(tipo="visual"))
+
+    @Rule(Resposta(comunicacao="Alta", entrega="negocio"), salience=10)
+    def d4_perfil_negocio(self):
+        self.perfis.append(("D4", "negócios", "Comunicação alta + foco em estratégia de produto"))
+        self.declare(Perfil(tipo="negocio"))
+
+    @Rule(Resposta(atuacao="dados_brutos"), salience=10)
+    def d5a_perfil_dados(self):
+        self.perfis.append(("D5a", "dados", "Gosta de analisar dados brutos"))
+        self.declare(Perfil(tipo="dados"))
+
+    @Rule(Resposta(entrega="insights"), salience=10)
+    def d5b_perfil_dados(self):
+        self.perfis.append(("D5b", "dados", "Valoriza extrair conhecimento dos dados"))
+        self.declare(Perfil(tipo="dados"))
+
+    @Rule(Resposta(atuacao="seguranca"), salience=10)
+    def d6a_perfil_defensivo(self):
+        self.perfis.append(("D6a", "segurança", "Prefere atuar com segurança no dia a dia"))
+        self.declare(Perfil(tipo="defensivo"))
+
+    @Rule(Resposta(entrega="seguranca"), salience=10)
+    def d6b_perfil_defensivo(self):
+        self.perfis.append(("D6b", "segurança", "Valoriza entregar segurança contra invasões"))
+        self.declare(Perfil(tipo="defensivo"))
+
+    @Rule(Resposta(linguagem="nenhuma", matematica="Baixa"), salience=10)
+    def d7_perfil_iniciante(self):
+        self.perfis.append(("D7", "iniciante", "Sem linguagem de afinidade e matemática baixa"))
+        self.declare(Perfil(tipo="iniciante"))
+
 # ----------------------------------------------------------------------------
 # API de alto nível (usada pelo Streamlit e pelos testes)
 # ----------------------------------------------------------------------------
