@@ -203,6 +203,189 @@ class ConsultorCarreiras(KnowledgeEngine):
         self.perfis.append(("D7", "iniciante", "Sem linguagem de afinidade e matemática baixa"))
         self.declare(Perfil(tipo="iniciante"))
 
+    # ======================= NÍVEL 2: pontuação das trilhas ===================
+    # ---- Back-end -----------------------------------------------------------
+    @Rule(Resposta(atuacao=EM("algoritmos", "servidores"), plataforma="api"))
+    def r01_be(self):
+        self.pontuar("BE", 4, "R01", "Gosta de lógica/servidores e quer construir APIs")
+
+    @Rule(Resposta(atuacao=EM("algoritmos", "servidores"), linguagem=EM("python", "sql", "java_csharp")))
+    def r02_be(self):
+        self.pontuar("BE", 3, "R02", "Linguagem de afinidade típica de back-end (Python/SQL/Java/C#) + lógica de servidor")
+
+    @Rule(Resposta(entrega="regras_sistema"))
+    def r03_be(self):
+        self.pontuar("BE", 4, "R03", "Quer entregar o motor do sistema: regras de negócio e dados")
+
+    @Rule(Resposta(atuacao="servidores"))
+    def r04_be(self):
+        self.pontuar("BE", 3, "R04", "Rotina diária com servidores, APIs e bancos de dados")
+
+    # ---- Front-end & UX -----------------------------------------------------
+    @Rule(Resposta(atuacao="layouts"))
+    def r05_fe(self):
+        self.pontuar("FE", 5, "R05", "Prefere criar layouts visuais e interfaces")
+
+    @Rule(Resposta(linguagem="javascript", plataforma="web"))
+    def r06_fe(self):
+        self.pontuar("FE", 3, "R06", "JavaScript + plataforma web (ecossistema de frameworks reativos)")
+
+    @Rule(Resposta(entrega="produto_usuario", plataforma="web"))
+    def r07_fe(self):
+        self.pontuar("FE", 3, "R07", "Quer entregar o produto que o usuário usa, no navegador")
+
+    @Rule(Perfil(tipo="visual"), Resposta(linguagem="javascript"))
+    def r08_fe(self):
+        self.pontuar("FE", 2, "R08", "Perfil visual com JavaScript como ferramenta")
+
+    # ---- Ciência de Dados & ML ---------------------------------------------
+    @Rule(Resposta(matematica="Alta", dados_foco="modelos"))
+    def r09_ds(self):
+        self.pontuar("DS", 6, "R09", "Afinidade alta com matemática/estatística e interesse em modelagem")
+
+    @Rule(Resposta(atuacao="dados_brutos", dados_foco="modelos"))
+    def r10_ds(self):
+        self.pontuar("DS", 3, "R10", "Analisa dados brutos com foco em modelos preditivos")
+
+    @Rule(Perfil(tipo="analitico"), Perfil(tipo="dados"), Resposta(dados_foco="modelos", linguagem="python"))
+    def r11_ds(self):
+        self.pontuar("DS", 3, "R11", "Perfil analítico + dados + Python + modelagem (combinação típica de DS)")
+
+    @Rule(Resposta(entrega="insights", dados_foco="modelos"))
+    def r12_ds(self):
+        self.pontuar("DS", 2, "R12", "Valor entregue como conhecimento/predições extraídos dos dados")
+
+    @Rule(Resposta(matematica="Baixa"))
+    def r13_ds_penal(self):
+        self.pontuar("DS", -4, "R13", "Matemática/estatística baixa reduz a aderência a DS e ML")
+
+    @Rule(Resposta(dados_foco="pipelines"))
+    def r14_ds_penal(self):
+        self.pontuar("DS", -3, "R14", "Foco em pipelines/arquitetura (e não em modelos) afasta de DS")
+
+    @Rule(Perfil(tipo="iniciante"))
+    def r15_ds_penal(self):
+        self.pontuar("DS", -3, "R15", "Perfil iniciante sem base de exatas: DS exige fundamentos pesados")
+
+    # ---- Engenharia de Dados -----------------------------------------------
+    @Rule(Resposta(dados_foco="pipelines"))
+    def r16_de(self):
+        self.pontuar("DE", 6, "R16", "Quer construir pipelines e arquitetura de dados (ETL/ELT)")
+
+    @Rule(Resposta(atuacao="dados_brutos", dados_foco="pipelines", linguagem=EM("sql", "python")))
+    def r17_de(self):
+        self.pontuar("DE", 3, "R17", "Dados brutos + pipelines + SQL/Python (ferramentas centrais de DE)")
+
+    @Rule(Perfil(tipo="dados"), Perfil(tipo="infra"), Resposta(dados_foco="pipelines"))
+    def r18_de(self):
+        self.pontuar("DE", 3, "R18", "Perfil dados + infraestrutura: base de Data Lakes e pipelines")
+
+    @Rule(Resposta(dados_foco="modelos"))
+    def r19_de_penal(self):
+        self.pontuar("DE", -3, "R19", "Foco em modelagem/experimentos (e não em pipelines) afasta de DE")
+
+    # ---- Cibersegurança -----------------------------------------------------
+    @Rule(Resposta(atuacao="seguranca"))
+    def r20_sec(self):
+        self.pontuar("SEC", 6, "R20", "Rotina diária voltada a segurança e vulnerabilidades")
+
+    @Rule(Resposta(entrega="seguranca"))
+    def r21_sec(self):
+        self.pontuar("SEC", 4, "R21", "Valor entregue: segurança contra invasões")
+
+    @Rule(Perfil(tipo="defensivo"), Resposta(linguagem="linux_redes"))
+    def r22_sec(self):
+        self.pontuar("SEC", 3, "R22", "Perfil de segurança + Linux/Redes (base de pentest e defesa de redes)")
+
+    @Rule(Resposta(matematica="Alta", atuacao="seguranca"))
+    def r23_sec(self):
+        self.pontuar("SEC", 1, "R23", "Matemática alta ajuda em criptografia")
+
+    # ---- DevOps & SRE -------------------------------------------------------
+    @Rule(Resposta(atuacao="automacao"))
+    def r24_do(self):
+        self.pontuar("DO", 6, "R24", "Rotina voltada a automatizar builds, deploys e processos (CI/CD)")
+
+    @Rule(Resposta(atuacao="automacao", linguagem="linux_redes"))
+    def r25_do(self):
+        self.pontuar("DO", 3, "R25", "Automação com Linux/Redes (contêineres, scripts, operação)")
+
+    @Rule(Resposta(entrega="infraestrutura", atuacao=EM("automacao", "servidores")))
+    def r26_do(self):
+        self.pontuar("DO", 2, "R26", "Entrega infraestrutura confiável, operando servidores/automação")
+
+    # ---- Computação em Nuvem ------------------------------------------------
+    @Rule(Resposta(atuacao="planejar_infra"))
+    def r27_cl(self):
+        self.pontuar("CL", 6, "R27", "Gosta de planejar/desenhar infraestrutura escalável")
+
+    @Rule(Resposta(plataforma="nuvem"))
+    def r28_cl(self):
+        self.pontuar("CL", 4, "R28", "Plataforma-alvo é a nuvem (AWS/Azure/GCP)")
+
+    @Rule(Resposta(entrega="infraestrutura", plataforma="nuvem", comunicacao=DIFERENTE("Baixa")))
+    def r29_cl(self):
+        self.pontuar("CL", 2, "R29", "Infra na nuvem + diálogo com times: perfil de arquiteto")
+
+    # ---- Mobile ---------------------------------------------------------------
+    @Rule(Resposta(atuacao="apps_celular"))
+    def r30_mo(self):
+        self.pontuar("MO", 6, "R30", "Quer construir aplicativos para celular")
+
+    @Rule(Resposta(plataforma="celular"))
+    def r31_mo(self):
+        self.pontuar("MO", 5, "R31", "Plataforma-alvo é o celular (Android/iOS)")
+
+    @Rule(Resposta(linguagem="mobile_nativo"))
+    def r32_mo(self):
+        self.pontuar("MO", 3, "R32", "Linguagem de afinidade é de mobile (Dart/Kotlin/Swift)")
+
+    @Rule(Resposta(plataforma="celular", entrega="produto_usuario"))
+    def r33_mo(self):
+        self.pontuar("MO", 2, "R33", "Quer entregar ao usuário final direto no celular")
+
+    # ---- QA -------------------------------------------------------------------
+    @Rule(Resposta(atuacao="qualidade"))
+    def r34_qa(self):
+        self.pontuar("QA", 6, "R34", "Rotina voltada a testar software e caçar bugs")
+
+    @Rule(Resposta(entrega="qualidade"))
+    def r35_qa(self):
+        self.pontuar("QA", 4, "R35", "Valor entregue: confiança de que o software funciona")
+
+    @Rule(Resposta(atuacao="qualidade", linguagem=EM("python", "javascript", "java_csharp")))
+    def r36_qa(self):
+        self.pontuar("QA", 2, "R36", "Qualidade + linguagem de programação: base para testes automatizados")
+
+    # ---- Product Management -------------------------------------------------
+    @Rule(Resposta(atuacao="negocio"))
+    def r37_pm(self):
+        self.pontuar("PM", 6, "R37", "Quer definir o que construir: usuários, prioridades e negócio")
+
+    @Rule(Resposta(entrega="negocio"))
+    def r38_pm(self):
+        self.pontuar("PM", 4, "R38", "Valor entregue: estratégia e produto certo")
+
+    @Rule(Perfil(tipo="negocio"))
+    def r39_pm(self):
+        self.pontuar("PM", 2, "R39", "Perfil de negócios: comunicação alta + foco em estratégia")
+
+    @Rule(Resposta(linguagem="nenhuma", entrega="negocio"))
+    def r40_pm(self):
+        self.pontuar("PM", 1, "R40", "Trilha em que profundidade técnica inicial não é barreira")
+
+    # ======================= DECISÃO FINAL ====================================
+    @Rule(Fase(nome="decisao"), salience=-100)
+    def r99_decisao(self):
+        n_regras = {t: sum(1 for d in self.disparos if d[1] == t and d[2] > 0) for t in TRILHAS}
+        self.ranking = sorted(
+            self.placar.items(),
+            key=lambda kv: (-kv[1], -n_regras[kv[0]], ORDEM_DESEMPATE.index(kv[0])),
+        )
+        if self.ranking[0][1] > 0:
+            self.recomendacao = self.ranking[0][0]
+
+
 # ----------------------------------------------------------------------------
 # API de alto nível (usada pelo Streamlit e pelos testes)
 # ----------------------------------------------------------------------------
