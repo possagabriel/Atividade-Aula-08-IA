@@ -74,14 +74,33 @@ comunicacao = st.select_slider(
     options=COMUNICACAO, value="Média", key="comunicacao",
 )
 
-if st.button("Descobrir minha trilha", type="primary"):
-    respostas = dict(
-        matematica=matematica, atuacao=atuacao, linguagem=linguagem, entrega=entrega,
-        dados_foco=dados_foco, plataforma=plataforma, comunicacao=comunicacao,
-    )
-    r = diagnosticar(respostas)
+respostas = dict(
+    matematica=matematica, atuacao=atuacao, linguagem=linguagem, entrega=entrega,
+    dados_foco=dados_foco, plataforma=plataforma, comunicacao=comunicacao,
+)
+# Preserva o resultado durante o rerun do desempate e invalida escolhas antigas.
+assinatura = tuple(respostas.items())
+if st.session_state.get("entrevista_analisada") != assinatura:
+    st.session_state.pop("entrevista_analisada", None)
+    st.session_state.pop("preferencia_desempate", None)
 
+if st.button("Descobrir minha trilha", type="primary"):
+    st.session_state["entrevista_analisada"] = assinatura
+
+if st.session_state.get("entrevista_analisada") == assinatura:
+    r = diagnosticar(respostas)
     st.divider()
+    if r["desempate_pendente"]:
+        st.info("Suas respostas apontam para trilhas próximas. Vamos esclarecer sua preferência.")
+        preferencia = st.radio(
+            "Qual destas atividades você gostaria de priorizar?",
+            r["candidatas"],
+            format_func=lambda t: f"{TRILHAS[t]}: {DESCRICOES[t]}",
+            index=None, key="preferencia_desempate",
+        )
+        if preferencia is None:
+            st.stop()
+        r = diagnosticar(respostas, preferencia=preferencia)
     if not r["recomendacao"]:
         st.warning("Não foi possível chegar a uma recomendação com essas respostas. Tente variar as escolhas.")
         st.stop()
@@ -90,9 +109,9 @@ if st.button("Descobrir minha trilha", type="primary"):
     st.write(DESCRICOES[r["recomendacao"]])
     st.write(f"**Grau de certeza:** {r['certeza']}")
 
-    if r["margem"] is not None and r["margem"] < 2:
-        segunda = r["ranking"][1][0]
-        st.info(f"Vale olhar também: **{TRILHAS[segunda]}** (pontuação muito próxima).")
+    if r["preferencia"]:
+        st.write("**Desempate:** você priorizou esta atividade entre as trilhas próximas. "
+                 "As pontuações originais foram preservadas.")
 
     st.subheader("Por que essa trilha? (regras disparadas)")
     for regra, _trilha, pts, motivo in r["motivos"]:

@@ -38,7 +38,7 @@ pytest -v                        # opcional
 1. A entrevista é dinâmica: a pergunta sobre foco em dados só aparece para quem demonstrou interesse em dados, e quem quer apps de celular não precisa escolher plataforma. As respostas viram um fato `Resposta`.
 2. **Nível 1** (D1..D7): regras derivam fatos `Perfil` (analítico, infra, visual, negócios, dados, defensivo, iniciante).
 3. **Nível 2** (R01..R40): regras cruzam respostas e perfis e pontuam as trilhas (com penalidades para evitar ambiguidade).
-4. **Decisão** (R99, menor salience): escolhe a trilha de maior pontuação e exibe as regras que a sustentam.
+4. **Decisão** (R99, menor salience): calcula o ranking. Quando duas ou mais trilhas positivas estão a menos de 2 pontos do topo, a interface pergunta qual atividade o usuário prefere. A recomendação aguarda essa resposta; a escolha preserva o placar e é explicada separadamente das regras. Alterar a entrevista invalida o resultado e o desempate anteriores.
 
 ## Observação sobre o Experta no Python 3.10+
 O Experta 1.9.x usa uma versão antiga do `frozendict` que depende de `collections.Mapping` (removido no Python 3.10).
@@ -61,3 +61,11 @@ O `engine.py` já inclui um pequeno shim no início do arquivo que resolve isso,
 | João - qualidade e testes | Média | Testar software e caçar bugs | Python | A confiança de que o software funciona | Dados não são meu foco | QA | QA |
 | Karen - matemática alta, mas ama pipelines (DE, não DS) | Alta | Analisar dados brutos | Python | Conhecimento extraído dos dados | Construir pipelines e arquitetura que movem e armazenam dados | DE | DE |
 | Leo - JS + celular (MO, não FE) | Média | Construir aplicativos para celular | JavaScript | O produto final que o usuário toca e usa | Dados não são meu foco | MO | MO |
+
+## Desempate e validação da interface
+
+`pytest -q` também verifica empates exatos, diferença de um ponto, rejeição de
+preferências fora das candidatas e o fluxo Streamlit (pergunta adicional,
+resultado e invalidação após mudar respostas). O ranking mantém as pontuações
+originais; após o desempate, a recomendação pode ser a segunda colocada no placar.
+O grau de certeza é uma heurística de margem, não uma probabilidade calibrada.

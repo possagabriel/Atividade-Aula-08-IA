@@ -389,7 +389,7 @@ class ConsultorCarreiras(KnowledgeEngine):
 # ----------------------------------------------------------------------------
 # API de alto nível (usada pelo Streamlit e pelos testes)
 # ----------------------------------------------------------------------------
-def diagnosticar(respostas: dict) -> dict:
+def diagnosticar(respostas: dict, preferencia: str | None = None) -> dict:
     """Executa o motor com as respostas e devolve o diagnóstico completo."""
     motor = ConsultorCarreiras()
     motor.reset()
@@ -411,11 +411,27 @@ def diagnosticar(respostas: dict) -> dict:
     else:
         certeza = "Baixa (trilhas muito próximas)"
 
+    # Uma preferência explícita só resolve candidatas positivas a até 1 ponto do topo.
+    candidatas = [t for t, pts in motor.ranking
+                  if pts > 0 and motor.ranking[0][1] - pts < 2]
+    pendente = len(candidatas) > 1
+    if preferencia is not None:
+        if not pendente or preferencia not in candidatas:
+            raise ValueError("Preferência deve ser uma das trilhas próximas do topo.")
+        rec = preferencia
+        pendente = False
+        certeza = "Definida por preferência no desempate"
+    elif pendente:
+        rec = None
+
     motivos = sorted(
         [d for d in motor.disparos if rec and d[1] == rec],
         key=lambda d: -d[2],
     )
     return {
+        "candidatas": candidatas if len(candidatas) > 1 else [],
+        "desempate_pendente": pendente,
+        "preferencia": preferencia,
         "recomendacao": rec,
         "nome": TRILHAS.get(rec),
         "ranking": motor.ranking,

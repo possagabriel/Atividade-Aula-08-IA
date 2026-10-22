@@ -75,7 +75,13 @@ Pontos positivos somam à trilha; pontos negativos (penalidades) existem para de
 ## Decisão final (R99, salience -100)
 
 Ordena o placar por: (1) pontos, (2) nº de regras positivas disparadas, (3) ordem fixa de desempate.
-A margem entre 1º e 2º lugar define o grau de certeza: >= 5 Alta, >= 2 Média, senão Baixa.
+A margem entre 1º e 2º lugar define uma indicação heurística: >= 5 Alta, >= 2 Média.
+Quando a margem é menor que 2, o diagnóstico não recomenda automaticamente:
+a interface apresenta todas as trilhas com pontuação positiva a até 1 ponto do topo
+e pergunta qual atividade o usuário prefere. A escolha resolve a ambiguidade sem
+alterar os pontos nem os disparos. A ordem fixa apenas organiza o ranking provisório.
+Após a escolha, a indicação passa a "Definida por preferência no desempate";
+não representa uma probabilidade. Preferências fora das candidatas são rejeitadas.
 
 ## Desambiguação Cientista de Dados x Engenheiro de Dados
 
